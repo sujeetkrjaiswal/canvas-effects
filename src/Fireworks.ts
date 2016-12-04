@@ -17,7 +17,7 @@
             this.animateCallRate = 1000 / fps;
         }
     }
-    /**This would provide the interface to external application to initiate the firework */
+    /**This would provide the interface to external application to initiate the firework. */
     export class App {
         private factor: Point;
         private canvas: HTMLCanvasElement;

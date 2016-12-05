@@ -17,12 +17,13 @@
             this.animateCallRate = 1000 / fps;
         }
     }
-    /**This would provide the interface to external application to initiate the firework. */
+    /**This would provide the interface to external application to initiate the firework.
+     * 
+    */
     export class App {
         private factor: Point;
         private canvas: HTMLCanvasElement;
         private context: CanvasRenderingContext2D;
-        private canvasData: ImageData;
         private config: Config;
         private flamePaths: FlamePoint[];
         private flamePointFactory: FlamePointFactory;
@@ -43,6 +44,20 @@
             this.flamePointFactory = new FlamePointFactory(config);
             this.flamePaths = [];
             this.callbackOnEmpty = callbackOnEmpty;
+            this.addListners();
+        }
+
+        public reset() {
+            this.flamePaths = [];
+            this.context.fillStyle = "rgba(0,0,0,1)";
+            this.context.fillRect(0, 0, this.factor.x, this.factor.y);
+        }
+        public addFlameBlasts(blastPoints: Point[], isLiteBlast: boolean = false) {
+            this.flamePaths.push(...blastPoints.map((point: Point): FlamePoint => this.flamePointFactory.getPreBlastFlamePoint(point.divide(this.factor), isLiteBlast)));
+            if (!this.isAnimActive) {
+                this.animateRequester();
+                this.isAnimActive = true;
+            }
         }
         private updateCanvasAndFactor() {
             this.factor.x = this.canvas.clientWidth;
@@ -51,73 +66,21 @@
             this.canvas.height = this.factor.y;
             this.shadeCanvas();
         }
-        public addListners() {
+        private addListners() {
             window.onresize = (event) => {
                 this.updateCanvasAndFactor();
-            }
-            window.ontouchstart = (event: TouchEvent) => {
-                var a: TouchList = event.changedTouches;
-                //a[0].
-            }
-            this.canvas.ontouchstart = (event: any) => {
-                this.mouseDown = true;
-                //this.mousePoints = [new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y)];
-            }
-            this.canvas.ontouchmove = (event: TouchEvent) => {
-                if (this.mouseDown) {
-                    //this.mousePoints.push(new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y));
-                }
-            }
-            this.canvas.ontouchend = (event: TouchEvent) => {
-                this.mouseDown = false;
-                this.addFlameBlasts(event.changedTouches.map((u: Touch) => {
-                    return new Point(u.clientX, u.clientY)
-                }), true);
-                this.mousePoints = [];
-            }
-            this.canvas.onclick = (event: MouseEvent) => {
-                this.addFlameBlasts([new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y)])
-            };
-            this.canvas.onmousedown = (event: MouseEvent) => {
-                this.mouseDown = true;
-                this.mousePoints = [new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y)];
-            }
-            this.canvas.onmousemove = (event: MouseEvent) => {                
-                if (this.mouseDown) {
-                    this.mousePoints.push(new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y));
-                }
-            }
-            this.canvas.onmouseup = (event: MouseEvent) => {
-                this.mouseDown = false;
-                this.addFlameBlasts(this.mousePoints, true);
-                this.mousePoints = [];
-            }
-
-
-        }
-        public addFlameBlasts(blastPoints: Point[], isLiteBlast: boolean = false) {
-            this.flamePaths.push(...blastPoints.map((point: Point): FlamePoint => this.flamePointFactory.getPreBlastFlamePoint(point, isLiteBlast)));
-            console.log()
-            if (!this.isAnimActive) {
-                this.animateRequester();
-                this.isAnimActive = true;
             }
         }
         private animateRequester() {
             if (this.flamePaths.length) {
-                requestAnimationFrame(() => { this.animate(); });
+                setTimeout(()=> {
+                    requestAnimationFrame(() => { this.animate(); });
+                }, this.config.animateCallRate);                
             } else {
                 this.isAnimActive = false;
                 (function (callback) { callback(); })(this.callbackOnEmpty);
                 
             }
-            //this.animateTimer = setTimeout(() => {
-            //    if (this.flamePaths.length) {
-            //        requestAnimationFrame(() => { this.animate();});
-            //    } else {
-            //        this.isAnimActive = false;
-            //    }
-            //}, 500);//this.config.animateCallRate
         }
         private animate() {
             let temp_postBlastContainer: FlamePoint[] = [];
@@ -166,36 +129,20 @@
                              
             });
         }
-        private processPoints(flamePoint: FlamePoint) {
-            let xarr: number[] = [-2, -1, 0, 1, 2];
-            let yarr: number[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
-            let point: Point = flamePoint.getNextPoint().multiple(this.factor);
-            yarr.forEach((y) => {
-                xarr.forEach((x) => {
-                    this.updateColorAtIndex(this.getImageDataIndex(point.add(new Point(x, y))), flamePoint.color, flamePoint.completion);
-                })
-            });
-            this.context.putImageData(this.canvasData, 0, 0);
-        }
-        private getImageDataIndex(point: Point): number {
-            return (point.x + point.y * this.factor.x) * 4;
-        }
-        private updateColorAtIndex(index: number, color: Color,completion:number) {
-            this.canvasData.data[index + 0] = 100//color.r;
-            this.canvasData.data[index + 1] = 100//color.g;
-            this.canvasData.data[index + 2] = 100//color.b;
-            this.canvasData.data[index + 3] = 1//color.a / completion;
-        }
-        public reset() {
-            this.flamePaths = [];
-            this.context.fillStyle = "rgba(0,0,0,1)";
-            this.context.fillRect(0, 0, this.factor.x, this.factor.y);
-        }
+
     }
+    /**Stages in a firework
+     * preBlast : forms a line between bottom center and the destination (blast point)
+     * postBlast : addes multiple points with origin as the blast point and destination as random points around the config.radius
+     */
     enum FlamePointStage {
         preBlast,
         postBlast
     }
+    /**Point : represents a dot with its coordinates
+     * It denote the coordinates using x and y coordinates (rectangular coordinate system)
+     * other utility functions are defined on this to facilitate other dependent functions
+     */
     export class Point {
         x: number;
         y: number;
@@ -221,6 +168,12 @@
                 this.y * factor.y
             );
         }
+        public divide(factor:Point):Point{
+            return new Point(
+                this.x / factor.x,
+                this.y / factor.y
+            );
+        }
         public getFactoredPoint(initialPoint: Point, factor: number): Point {
             return new Point(
                 initialPoint.x + factor * this.x,
@@ -228,6 +181,11 @@
             );
         }
     }
+    /**Line Class represents a virtual line between the source and destination point
+     * for faster performance reasons, we also stores diff between the source and destination
+     * 
+     * It has a method which calculates the point at certain percentage 
+     */
     class Line {
         private start: Point;
         private diff: Point;
@@ -241,6 +199,12 @@
             return this.diff.getFactoredPoint(this.start, percentage/100);
         }
     }
+    /**Flame Point represents the burning point in an firework
+     * path : keeps the line to which the flame point will travel
+     * stage : blast stage - preBlast, postBlast
+     * completion : stores the percentage of the path which flame has already covered
+     * color : hls value of the flame point
+    */
     class FlamePoint {
         path: Line;
         stage: FlamePointStage;
@@ -265,6 +229,9 @@
             return this.path.xyAtPercentage(this.completion + relativeCompletion);
         }
     }
+    /**Color provides rgba and hsl 
+     * it generates Random colors in constructor
+     */
     class Color {
         r: number;
         g: number;
@@ -302,6 +269,12 @@
             }
         }
     }
+    /**This is a factory to generate following
+     * preBlast FlamePoint
+     * postBlast flamePoint
+     * 
+     * It also calculates the initial blast radius for points
+     */
     class FlamePointFactory {
         private originPoint: Point;
         private config: Config;
@@ -357,3 +330,25 @@
     }
 }
 
+//Useful listner that Parent Application Can have to provide different Animations
+/*
+this.canvas :: refrence to the DOM of Canvas
+
+this.canvas.onclick = (event: MouseEvent) => {
+    this.addFlameBlasts([new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y)])
+}
+this.canvas.onmousedown = (event: MouseEvent) => {
+    this.mouseDown = true;
+    this.mousePoints = [new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y)];
+}
+this.canvas.onmousemove = (event: MouseEvent) => {                
+    if (this.mouseDown) {
+        this.mousePoints.push(new Point(event.offsetX / this.factor.x, event.offsetY / this.factor.y));
+    }
+}
+this.canvas.onmouseup = (event: MouseEvent) => {
+    this.mouseDown = false;
+    this.addFlameBlasts(this.mousePoints, true);
+    this.mousePoints = [];
+}
+*/

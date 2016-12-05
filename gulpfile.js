@@ -4,6 +4,7 @@ var tslint = require('gulp-tslint');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var rename = require("gulp-rename");
+var clean = require('gulp-clean');
 
 var browserSync = require('browser-sync').create();
 
@@ -36,8 +37,11 @@ gulp.task('watch',['ts','browserSync'],function(){
 gulp.task('default',['watch'],function(){
 
 })
-
-gulp.task('deploy-ts',function(){
+gulp.task('clean-scripts', function () {
+  return gulp.src('dist/*.js', {read: false})
+    .pipe(clean());
+});
+gulp.task('deploy-ts',['clean-scripts'],function(){
 	return gulp.src('./src/**/*.ts')
 		.pipe(ts({}))
 		.pipe(gulp.dest('./dist'))
@@ -48,6 +52,6 @@ gulp.task('deploy-minify',['deploy-ts'],function(){
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest('./dist'))
 })
-gulp.task('deploy',['deploy-ts','deploy-minify'],function(){
+gulp.task('deploy',['deploy-minify'],function(){
 	console.log("done");
 })

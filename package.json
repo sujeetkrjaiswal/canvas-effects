@@ -23,6 +23,7 @@
   "devDependencies": {
     "browser-sync": "^2.18.2",
     "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.9.1",
     "gulp-tslint": "^7.0.1",

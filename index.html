@@ -1,12 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Canvas - Effects</title>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<title>Canvas Effect - by Sujeet Kumar Jaiswal</title>
+	<meta name="description" content="This is a project with multiple diffeent types of canvas effects, build using pure ECMA Script 2016 / ES6, and uses HTML 5 canvas. By Sujeet Kumar Jaiswal.">
+    <meta name="keywords" content="Sujeet Kumar Jaiswal, Canvas, HTML 5, Canvas Effect">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue_grey-indigo.min.css" />
+    <style>
+    	body{margin: 0;font-family: Roboto;}
+    	.small-caps{font-variant: small-caps;}
+    	.padd10{padding:10px;}
+    	.wid100{width: 100%;}
+    	a{text-decoration: none; color:inherit;}
+    </style>
+
 </head>
 <body>
+
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layoutmdl-layout--fixed-header">
+  <header class="mdl-layout__header" style="display: block !important;">
+    <div class="mdl-layout__header-row" style="padding-left: 16px;">
+      <!-- Title -->
+      <a href="http://sujeetjaiswal.com" class="mdl-layout-title small-caps">Sujeet Kumar Jaiswal</a>
+    </div>
+  </header>
+  <main class="mdl-layout__content wid100">
+    <div class="page-content padd10" >
+
+		<div class="mdl-card mdl-shadow--2dp wid100">
+		  <div class="mdl-card__title">
+		    <h2 class="mdl-card__title-text">Canvas Effects List</h2>
+		  </div>
+		  <div class="mdl-card__supporting-text">
+		    Below are the list of Canvas Effects. Please Click to view the effects.
+		  </div>
+			<ul class="demo-list-three mdl-list">
+			  <li class="mdl-list__item mdl-list__item--three-line">
+			    <span class="mdl-list__item-primary-content">
+						<a class="mdl-button" href="./ConstellationEffect/index.html">
+			    		Constellation Effect (Random)
+			      </a>
+			      <span class="mdl-list__item-text-body">
+			        This effects shows moving dots, whose size increases when they are nearer to the mouse pointer. And they form a line when any two of the dots are nearby, whose width denotes the strength of the force.
+			      </span>
+			    </span>
+			  </li>
+			  <li class="mdl-list__item mdl-list__item--three-line">
+			    <span class="mdl-list__item-primary-content">
+				    <a class="mdl-button" href="./Diwali2016/index.html">
+				      HAppy Diwali 2016 (AutoTyping & Fireworks)
+				    </a>
+			      <span class="mdl-list__item-text-body">
+			        This is a automatic firework for diwali using fireworks effects which is modified to add some extra effects. The wish message is using the AutoTyping module.
+			      </span>
+			    </span>
+			  </li>
+			  <li class="mdl-list__item mdl-list__item--three-line">
+			    <span class="mdl-list__item-primary-content">
+						<a class="mdl-button" href="./Fireworks/index.html">
+						  FireWorks
+						</a>
+			      <span class="mdl-list__item-text-body">
+			        This is a simple Fireworks effects. A firework is fired from the bottom center of the screen, and is blasted at the point of cursor click. If the mouse button is clicked and moved, different location in the path is stored, and simultaneously multiple fireworks will be fired to each location.
+			      </span>
+			    </span>
+			  </li>  
+			</ul>
+
+		</div>
+
+    </div>
+  </main>
+</div>
+
+<!-- <nav>
+	<a id="profileLink" href="/">Sujeet Kr. Jaiswal</a>
+</nav>
 <h1>List of effects :</h1>
 <ul>
-    <li><a href="http://sujeetjaiswal.com/canvas-effects/Fireworks.html">Fireworks http://sujeetjaiswal.com/canvas-effects/Fireworks.html</a></li>
-</ul>
+    <li><a target="_blank" href="./ConstellationEffect/index.html">Constellation Effect (Random)</a></li>
+    <li><a target="_blank" href="./Fireworks/index.html">FireWorks</a></li>
+    <li><a target="_blank" href="./Diwali2016/index.html">HAppy Diwali 2016 (AutoTyping & Fireworks)</a></li>
+</ul> -->
 </body>
 </html>
